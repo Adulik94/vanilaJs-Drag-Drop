@@ -1,31 +1,37 @@
 const main = document.querySelector("main");
 
+
 main.addEventListener("click", (event) => {
     //only click on button
     if (event.target.tagName === "BUTTON") {
+        console.log(event.target.tagName)
         //get button name  from attribute "data-name"
-        const { name } = event.target.dataset;
+        const {name} = event.target.dataset;
         //if we have add button we should define text task
-        if (name === "add-btn") {                       //[data-name='odo-input'] for changing  styles
+        if (name === "add-btn") {
             const todoInput = main.querySelector('[data-name="todo-input"]');
-
-           //if its not empty we get text
-
+            //if its not empty we get text
             if (todoInput.value.trim() !== "") {
                 const value = todoInput.value;
                 //creating task shablon .....
                 const template = `
+                                <!-- The Modal -->
                             <li class="list-group-item" draggable="true" data-id="${Date.now()}">
                               <p>${value}</p>
+                              <button class="btn btn-outline-danger btn-sm launch-modal" data-toggle="modal" data-target="#myModal"> note</button>
                               <button class="btn btn-outline-danger btn-sm" data-name="remove-btn">X</button>
                             </li>
+                            
                 `;
                 //find list of tasks  add shablon and clear
-                const todosList = main.querySelector('[data-name="todos-list"]');
-                        //insertAdjacentHTML   parses specific text as html result parse into dom ( special position )
-                        //beforeend : Just inside the element, after its last child.
+                const todosList = main.querySelector('[data-name="todos-list"]')
+                ;
+                //insertAdjacentHTML   parses specific text as html result parse into dom ( special position )
+                //beforeend : Just inside the element, after its last child.
                 todosList.insertAdjacentHTML("beforeend", template);
                 todoInput.value = "";
+            } else {
+                alert(" enter to do, input value is empty ")
             }
         } else if (name === "remove-btn") {
             //delete task
@@ -33,6 +39,17 @@ main.addEventListener("click", (event) => {
         }
     }
 });
+
+
+const myModal = main.querySelector("#myModal")
+
+myModal.addEventListener('click',function(){
+    const  textArea = querySelector("#textareaID").focus()
+    const btn= querySelector('.btn.btn-primary').click()
+    if(btn){
+        alert(textArea)
+    }
+})
 
 //get draggable item
 main.addEventListener("dragenter", (event) => {
@@ -56,6 +73,7 @@ main.addEventListener("dragstart", (event) => {
     }
 });
 
+
 //creat
 let elemBelow = "";
 
@@ -68,6 +86,8 @@ main.addEventListener("drop", (event) => {
     const todo = main.querySelector(
         `[data-id="${event.dataTransfer.getData("text/plain")}"]`
     );
+
+    if (elemBelow === todo) return;
 
     if (elemBelow.tagName === "P" || elemBelow.tagName === "BUTTON") {
         elemBelow = elemBelow.parentElement;
@@ -97,7 +117,7 @@ main.addEventListener("drop", (event) => {
             event.target.classList.remove("drop");
         }
 
-        const { name } = event.target.dataset;
+        const {name} = event.target.dataset;
 
         if (name === "completed-list") {
             if (todo.classList.contains("in-progress")) {
@@ -115,7 +135,3 @@ main.addEventListener("drop", (event) => {
     }
 });
 
-
-function addToLocalStorage(todos) {
-    localStorage.setItem('todos',JSON.stringify(todos))
-}

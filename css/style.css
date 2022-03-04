@@ -30,10 +30,17 @@ main {
 }
 
 .list-group-item {
+    padding: 0.75rem 0.75rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+/*.list-group-item {*/
+/*    position: relative;*/
+/*    display: block;*/
+/*    background-color: #fff;*/
+/*    border: 1px solid rgba(0,0,0,.125);*/
+/*}*/
 
 /* button styles */
 
@@ -43,10 +50,11 @@ main {
     border-color: rgb(154, 37, 233);
 }
 
-.btn-outline-danger {
+.btn-outline-danger , .btn-primary{
     color:  #b086d9;
     border-color:  #b086d9;
 }
+
 div + div {
     border-right: 1px dotted #222;
 }
@@ -71,4 +79,9 @@ p {
 .drop {
     background: linear-gradient(#eee, transparent);
     border-radius: 4px;
+}
+
+/*notes*/
+.launch-modal {
+    margin: 10px;
 }
