@@ -3,82 +3,23 @@
 <head>
     <!-- Bootstrap CSS -->
     <link rel="shortcut icon" href="#">
-    <link
-            rel="stylesheet"
-            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-            integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
-            crossorigin="anonymous"
-    />
     <!-- custom CSS -->
     <link rel="stylesheet" href="css/style.css" />
     <title>Vanilla Js </title>
 </head>
 <body>
 
-<h1> VanillaJS Drag & Drop</h1>
-<main class="row">
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text">Enter new todo: </span>
-        </div>
-            <input type="text" class="form-control" data-name="todo-input" />
-        <div class="input-group-append">
-            <button class="btn btn-success" data-name="add-btn">Add</button>
-        </div>
+<div class="app">
+    <header>
+        <h1>VanillaJS Drag & Drop</h1>
+    </header>
+    <form class="list-form" onsubmit="createList(event)">
+        <input type="text" name="title" id="titleText">
+        <button type="submit">Add</button>
+    </form>
+    <div class="lists" id="lists">
     </div>
-    <div class="col-4">
-        <h3>No Status </h3>
-        <ul class="list-group"  data-name="todos-list"  data-dismiss="modal" data-target="#exampleModal">
-            <li class="list-group-item" data-id="1" draggable="true">
-                <p>drag</p>
-                <button class="btn btn-outline-danger btn-sm" data-name="remove-btn">
-                    X
-                </button>
-            </li>
-            <li class="list-group-item" data-id="2" draggable="true">
-                <p>drop</p>
-                <button class="btn btn-outline-danger btn-sm" data-name="remove-btn">
-                    X
-                </button>
-            </li>
-            <li class="list-group-item" data-id="3" draggable="true">
-                <p>vanilla</p>
-                <button class="btn btn-outline-danger btn-sm" data-name="remove-btn">
-                    X
-                </button>
-            </li>
-        </ul>
-    </div>
-    <div class="col-4">
-        <h3>In Progress</h3>
-        <ul class="list-group" data-name="in-progress-list"></ul>
-    </div>
-    <div class="col-4">
-        <h3>Completed</h3>
-        <ul class="list-group" data-name="completed-list"></ul>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-                </div>
-                <div class="modal-body">
-                    <textarea id="textareaID" class="form-control"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-</main>
-
+</div>
 <script src="js/app.js"></script>
 </body>
 </html>

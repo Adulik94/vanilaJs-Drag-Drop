@@ -1,137 +1,213 @@
-const main = document.querySelector("main");
+// window.onload = load;
+const titleText = document.getElementById('titleText');
+const lists = document.getElementById('lists');
+
+let board_section = []
+let categories = [];
 
 
-main.addEventListener("click", (event) => {
-    //only click on button
-    if (event.target.tagName === "BUTTON") {
-        console.log(event.target.tagName)
-        //get button name  from attribute "data-name"
-        const {name} = event.target.dataset;
-        //if we have add button we should define text task
-        if (name === "add-btn") {
-            const todoInput = main.querySelector('[data-name="todo-input"]');
-            //if its not empty we get text
-            if (todoInput.value.trim() !== "") {
-                const value = todoInput.value;
-                //creating task shablon .....
-                const template = `
-                                <!-- The Modal -->
-                            <li class="list-group-item" draggable="true" data-id="${Date.now()}">
-                              <p>${value}</p>
-                              <button class="btn btn-outline-danger btn-sm launch-modal" data-toggle="modal" data-target="#myModal"> note</button>
-                              <button class="btn btn-outline-danger btn-sm" data-name="remove-btn">X</button>
-                            </li>
-                            
-                `;
-                //find list of tasks  add shablon and clear
-                const todosList = main.querySelector('[data-name="todos-list"]')
-                ;
-                //insertAdjacentHTML   parses specific text as html result parse into dom ( special position )
-                //beforeend : Just inside the element, after its last child.
-                todosList.insertAdjacentHTML("beforeend", template);
-                todoInput.value = "";
-            } else {
-                alert(" enter to do, input value is empty ")
-            }
-        } else if (name === "remove-btn") {
-            //delete task
-            event.target.parentElement.remove();
+//
+
+function dragNDrop() {
+    //get lise and list-item
+    const list_items = document.querySelectorAll('.list-item');
+    const lists = document.querySelectorAll('.list');
+    //circle fot list item and getting them
+    let draggedItem = null;
+    for (let i = 0; i < list_items.length; i++) {
+        const item = list_items[i];
+
+        //start draggable items
+        item.addEventListener('dragstart', function () {
+            // console.log("dragstart")
+            draggedItem = item;
+            setTimeout(function () {
+                item.style.display = 'none';
+
+            }, 0);
+        });
+
+        //finish draggable item
+        item.addEventListener('dragend', function () {
+            // console.log("dragend")
+            setTimeout(function () {
+                draggedItem.style.display = 'block';
+                draggedItem = null;
+            }, 0);
+        });
+
+        //list of items
+        for (let j = 0; j < lists.length; j++) {
+            const list = lists[j];
+
+            // console.log('list ', list);
+            //take item and drag over (new element inside block )
+            list.addEventListener('dragover', function (event) {
+                event.preventDefault();
+            });
+
+            //enter the zone of draggable item
+            list.addEventListener('dragenter', function () {
+                this.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+            });
+            //leave the zone and "delete" color
+            list.addEventListener('dragleave', function (event) {
+                this.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+                event.preventDefault()
+
+            });
+            //drop in the zone
+            list.addEventListener('drop', function () {
+                //set  background color in drop zone
+                this.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+                if (draggedItem === null) {
+                    return
+                }
+                this.append(draggedItem);
+
+            });
         }
     }
-});
+}
 
-
-const myModal = main.querySelector("#myModal")
-
-myModal.addEventListener('click',function(){
-    const  textArea = querySelector("#textareaID").focus()
-    const btn= querySelector('.btn.btn-primary').click()
-    if(btn){
-        alert(textArea)
-    }
-})
-
-//get draggable item
-main.addEventListener("dragenter", (event) => {
-    if (event.target.classList.contains("list-group")) {
-        event.target.classList.add("drop");
-    }
-});
-
-//put draggable item
-main.addEventListener("dragleave", (event) => {
-    if (event.target.classList.contains("drop")) {
-        event.target.classList.remove("drop");
-    }
-});
-
-//start dragging
-main.addEventListener("dragstart", (event) => {
-    if (event.target.classList.contains("list-group-item")) {
-        //dataTransfer use for save data that is dragged during dNd operation
-        event.dataTransfer.setData("text/plain", event.target.dataset.id);
-    }
-});
-
-
-//creat
-let elemBelow = "";
-
-main.addEventListener("dragover", (event) => {
+//creating the list
+function createList(event) {
     event.preventDefault();
-    elemBelow = event.target;
-});
+    //get title text
+    // if input is empty alert .... if not
+    if (titleText.value.length === 0) {
+        alert('Section cannot be empty, please add a title of section ');
+        return
+    }
+    //creating and append the element
+    const list = createElement('div', '', 'list');
+    const title = createElement('h3', titleText.value, 'list-title');
 
-main.addEventListener("drop", (event) => {
-    const todo = main.querySelector(
-        `[data-id="${event.dataTransfer.getData("text/plain")}"]`
-    );
 
-    if (elemBelow === todo) return;
+    list.id = `task-${titleText.value}-list`;
+    list.append(title);
+    lists.append(list);
+    const taskInput = createTaskInput(titleText.value);
+    list.append(taskInput);
+    titleText.value = '';
+    dragNDrop();
+}
 
-    if (elemBelow.tagName === "P" || elemBelow.tagName === "BUTTON") {
-        elemBelow = elemBelow.parentElement;
+
+function showItem() {
+    let taskList
+    let localItems = JSON.parse(localStorage.getItem('localItem'))
+    if (localItems === null) {
+        taskList = []
+
+    } else {
+        taskList = localItems;
     }
 
-    if (elemBelow.classList.contains("list-group-item")) {
-        const center =
-            elemBelow.getBoundingClientRect().y +
-            elemBelow.getBoundingClientRect().height / 2;
+    let html = '';
+    let itemShow = document.querySelector('.lists');
+    taskList.forEach((data,index) => {
+        html += `
+        <div class="list" id="task-${data.id}-list">
+        <h3 class="list-title">${data.name}</h3>
+        <form class="task-form">
+        <input name="task" id="task-${data.tasks}">
+        <button>Add</button>
+        <div class="list-item" ${index} draggable="true">${data.tasks}</div>
+        </form>
+        </div>
+    `
+    })
+    itemShow.innerHTML = html;
+    dragNDrop()
+    createElement()
 
-        if (event.clientY > center) {
-            if (elemBelow.nextElementSibling !== null) {
-                elemBelow = elemBelow.nextElementSibling;
-            } else {
-                return;
-            }
-        }
+}
 
-        elemBelow.parentElement.insertBefore(todo, elemBelow);
-        todo.className = elemBelow.className;
+showItem()
+
+
+//create Element
+function createElement(tag, text, className = null) {
+    const element = document.createElement(tag);
+    // console.log('element', element)
+
+    //if we have name then we add classList and return element
+    if (className) {
+        // console.log('className', className);
+        element.classList.add(className);
     }
+    if (text && text.length > 0) {
+        const textNode = document.createTextNode(text);
+        element.appendChild(textNode);
+    }
+    return element;
+}
 
-    if (event.target.classList.contains("list-group")) {
-        event.target.append(todo);
-
-        if (event.target.classList.contains("drop")) {
-            event.target.classList.remove("drop");
-        }
-
-        const {name} = event.target.dataset;
-
-        if (name === "completed-list") {
-            if (todo.classList.contains("in-progress")) {
-                todo.classList.remove("in-progress");
-            }
-            todo.classList.add("completed");
-        } else if (name === "in-progress-list") {
-            if (todo.classList.contains("completed")) {
-                todo.classList.remove("completed");
-            }
-            todo.classList.add("in-progress");
+//create new board
+function createTaskInput(listName) {
+    console.log("listName", listName);
+    const form = createElement('form', '', 'task-form');
+    const input = createElement('input', '');
+    const button = createElement('button', '');
+    let boardList
+    if (listName !== 0) {
+        let localItems = JSON.parse(localStorage.getItem("localItem"))
+        if (localItems === null) {
+            boardList = []
         } else {
-            todo.className = "list-group-item";
+            boardList = localItems;
         }
-    }
-});
 
+        const id = `task-${listName}`;
+        boardList.push({"name": listName, "id": id})
+        localStorage.setItem('localItem', JSON.stringify(boardList))
+        input.name = 'task';
+        input.id = id;
+        button.innerText = 'Add';
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            // showItem()
+            addTaskListItem(id);
+        });
+        form.append(input);
+        form.append(button);
+
+    }
+
+    return form;
+}
+
+
+//add task item in board
+function addTaskListItem(id) {
+    //get element by id
+    const task = document.getElementById(id);
+
+    //creating new task in block
+    let localItems = JSON.parse(localStorage.getItem("localItem"));
+    const item = localItems.find(el => el.id === id);
+
+    if (item.tasks) {
+        item.tasks.push(task.value)
+    } else {
+        item.tasks = [task.value]
+    }
+    localItems = localItems.filter(el => el.id !== id);
+    localItems.push(item);
+    localStorage.setItem("localItem", JSON.stringify(localItems))
+
+    if (task.value.length === 0) {
+        alert('add new task');
+        return []
+
+    }
+
+    const list = document.getElementById(`${id}-list`);
+    const listItem = createElement('div', task.value, 'list-item');
+
+    listItem.setAttribute('draggable', true);
+    task.value = '';
+    list.append(listItem);
+    dragNDrop();
+}
